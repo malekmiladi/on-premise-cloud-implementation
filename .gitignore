@@ -15,7 +15,7 @@
 **/target
 **/gradle
 **/HELP.md
-**/pyenv.cfg
+**/pyvenv.cfg
 **/__pycache__
 
 HELP.md
