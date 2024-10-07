@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+package com.onpremisecloudimplementation.grpcservices;
+
+
+// Definitions for instance grpc service
+message InstanceImageData {
+    string downloadUrl = 1;
+}
+
+message InstanceSpecifications {
+    string instanceId = 1;
+    string instanceName = 2;
+    int32 cpusCount = 3;
+    int32 memorySizeGb = 4;
+    int32 diskSizeGb = 5;
+    InstanceImageData image = 6;
+}
+
+message ComputeNodeError {
+    int32 type = 1;
+    string message = 2;
+}
+
+message UpdatedInstanceMetadata {
+    string internalIp = 1;
+    string externalIp = 2;
+    string state = 3;
+}
+
+message ComputeNodeResponse {
+    bool ack = 1;
+    ComputeNodeError error = 2;
+    UpdatedInstanceMetadata metadata = 3;
+}
+
+message InstanceShutdownOrDeleteTarget {
+    string instanceId = 1;
+}
+
+service InstanceActionsService {
+    rpc createNewInstance(InstanceSpecifications) returns (ComputeNodeResponse);
+    rpc shutDownInstance(InstanceShutdownOrDeleteTarget) returns (ComputeNodeResponse);
+    rpc deleteInstance(InstanceShutdownOrDeleteTarget) returns (ComputeNodeResponse);
+}
+
+
+// Definitions for compute node heartbeat service
+message HeartbeatResponse {
+    bool ack = 1;
+}
+
+message HeartbeatRequest { 
+
+}
+
+service HeartbeatService {
+    rpc checkHeartbeat(HeartbeatRequest) returns (HeartbeatResponse);
+}
+
+
+// Definitions for compute node registration service
+message ComputeNodeRegisterationData {
+    string nodeId = 1;
+    string grpcUrlString = 2;
+    int32 defaultCpus = 3;
+    int32 defaultMemoryGb = 4;
+    int32 defaultStorageGb = 5;
+    string region = 6;
+}
+
+message OrchestratorAck {
+    bool ack = 1;
+    string message = 2;
+    string computeNodeId = 3;
+}
+
+service ComputeNodeRegistrationService {
+    rpc registerComputeNode(ComputeNodeRegisterationData) returns (OrchestratorAck);
+}
